@@ -1,0 +1,5 @@
+name: 'Google Chart Field'
+type: module
+description: 'Creates a field type to display charts via Google charts.'
+core: 8.x
+package: 'Custom'

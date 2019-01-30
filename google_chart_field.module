@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains google_chart_field.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function google_chart_field_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the google_chart_field module.
+    case 'help.page.google_chart_field':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Creates a field type to display charts via Google charts.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
