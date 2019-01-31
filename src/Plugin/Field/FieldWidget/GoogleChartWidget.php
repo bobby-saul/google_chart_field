@@ -24,8 +24,6 @@ class GoogleChartWidget extends WidgetBase {
    */
   public static function defaultSettings() {
     return [
-      'size' => 60,
-      'placeholder' => '',
     ] + parent::defaultSettings();
   }
 
@@ -34,20 +32,6 @@ class GoogleChartWidget extends WidgetBase {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = [];
-
-    $elements['size'] = [
-      '#type' => 'number',
-      '#title' => t('Size of textfield'),
-      '#default_value' => $this->getSetting('size'),
-      '#required' => TRUE,
-      '#min' => 1,
-    ];
-    $elements['placeholder'] = [
-      '#type' => 'textfield',
-      '#title' => t('Placeholder'),
-      '#default_value' => $this->getSetting('placeholder'),
-      '#description' => t('Text that will be shown inside the field until a value is entered. This hint is usually a sample value or a brief description of the expected format.'),
-    ];
 
     return $elements;
   }
@@ -58,7 +42,7 @@ class GoogleChartWidget extends WidgetBase {
   public function settingsSummary() {
     $summary = [];
 
-    $summary[] = t('Textfield size: @size', ['@size' => $this->getSetting('size')]);
+    $summary[] = t('Google Chart display');
     if (!empty($this->getSetting('placeholder'))) {
       $summary[] = t('Placeholder: @placeholder', ['@placeholder' => $this->getSetting('placeholder')]);
     }
@@ -70,12 +54,28 @@ class GoogleChartWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element['value'] = $element + [
-      '#type' => 'textfield',
-      '#default_value' => isset($items[$delta]->value) ? $items[$delta]->value : NULL,
-      '#size' => $this->getSetting('size'),
-      '#placeholder' => $this->getSetting('placeholder'),
-      '#maxlength' => $this->getFieldSetting('max_length'),
+    $field_name = $this->fieldDefinition->getLabel();
+    $element['#attached']['library'][] = 'google_chart_field/widget';
+
+    $element['#prefix'] = '<strong>' . $field_name .'</strong><div class="google-chart-field-wrapper">';
+    $element['#suffix'] = '</div>';
+
+    $element['data'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Data'),
+      '#default_value' => isset($items[$delta]->data) ?
+      $items[$delta]->data : NULL,
+      '#prefix' => '<div class="handsontable-wrapper"></div><div class="google-chart-data-field-wrapper">',
+      '#suffix' => '</div>',
+    ];
+
+    $element['options'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Options'),
+      '#default_value' => isset($items[$delta]->options) ?
+      $items[$delta]->options : NULL,
+      '#prefix' => '<div class="googlecharts-wrapper"></div><div class="google-chart-options-field-wrapper">',
+      '#suffix' => '</div>',
     ];
 
     return $element;

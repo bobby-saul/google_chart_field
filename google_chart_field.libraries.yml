@@ -1,0 +1,24 @@
+handsontable:
+  css:
+    theme:
+      https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css: { type: external, minified: true }
+  js:
+    https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js: { type: external, minified: true }
+
+googlecharts:
+  js:
+    https://www.gstatic.com/charts/loader.js: { type: external, minified: true }
+
+widget:
+  css:
+    theme:
+      css/widget.css: {}
+  js:
+    js/widget.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+    - google_chart_field/handsontable
+    - google_chart_field/googlecharts
