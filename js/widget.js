@@ -67,16 +67,34 @@
         $(field).find('.google-charts-preview-wrapper').before('<button class="google-charts-editor-button">Edit Chart</button>');
 
         // helper function to draw google chart
-        function drawChart(elem, hotdata) {
-          // Create the chart to edit.
-          data = new google.visualization.arrayToDataTable(hotdata, true );
-          chartWrapper = new google.visualization.ChartWrapper({
-            'chartType':'LineChart',
-            'dataTable': data,
-          });
+        function drawChart(hotdata) {
+          // get the chart data
+          var data = new google.visualization.arrayToDataTable(hotdata, true );
+          
+          // get the chart wrapper
+          var savedChart = $(field).find("[name$='[chart_wrapper]']").val();
+          if (savedChart) {
+            savedChart = JSON.parse(savedChart);
+            chartWrapper = new google.visualization.ChartWrapper(savedChart);
+          } else {
+            chartWrapper = new google.visualization.ChartWrapper({
+              'chartType':'LineChart',
+              'dataTable': data,
+            });
+          }
 
           chartEditor = new google.visualization.ChartEditor();
           google.visualization.events.addListener(chartEditor, 'ok', redrawChart);
+
+          if (savedChart){
+            resetData(hotdata);
+          }
+        }
+
+        // helper function to save chart
+        function saveChart() {
+          var data = chartWrapper.toJSON();
+          $(field).find("[name$='[chart_wrapper]']").val(JSON.stringify(data));
         }
 
         // helper function to redraw chart
@@ -84,6 +102,7 @@
           if (chartEditor){
             chartEditor.getChartWrapper().draw($(field).find('.google-charts-preview-wrapper').get(0));
             chartWrapper = chartEditor.getChartWrapper();
+            saveChart();
           }
         }
 
@@ -93,6 +112,7 @@
             data = new google.visualization.arrayToDataTable(data, true );
             chartWrapper.setDataTable(data);
             chartWrapper.draw($(field).find('.google-charts-preview-wrapper').get(0));
+            saveChart();
           }
         }
 
@@ -124,7 +144,7 @@
 
         // create google charts preview
         google.charts.setOnLoadCallback(function () {
-          drawChart($(field).find('.google-charts-preview-wrapper').get(0), cleanArray(data));
+          drawChart(cleanArray(data));
         });
 
         $('.google-charts-editor-button').on('click', function (e) {

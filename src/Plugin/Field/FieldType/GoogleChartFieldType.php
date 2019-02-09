@@ -25,9 +25,9 @@ class GoogleChartFieldType extends FieldItemBase {
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['data'] = DataDefinition::create('string')
-      ->setLabel(t('The data that should be displayed.'));
-    $properties['options'] = DataDefinition::create('string')
-      ->setLabel(t('The options that go with the chart display.'));
+      ->setLabel(t('The data from handsontable.'));
+    $properties['chart_wrapper'] = DataDefinition::create('string')
+      ->setLabel(t('The chart wrapper object that goes with the chart display.'));
 
     return $properties;
   }
@@ -43,7 +43,7 @@ class GoogleChartFieldType extends FieldItemBase {
           'size' => 'big',
           'not null' => FALSE,
         ],
-        'options' => [
+        'chart_wrapper' => [
           'type' => 'text',
           'size' => 'big',
           'not null' => FALSE,

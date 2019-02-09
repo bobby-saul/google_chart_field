@@ -69,11 +69,11 @@ class GoogleChartWidget extends WidgetBase {
       '#suffix' => '</div>',
     ];
 
-    $element['options'] = [
+    $element['chart_wrapper'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Options'),
-      '#default_value' => isset($items[$delta]->options) ?
-      $items[$delta]->options : NULL,
+      '#title' => $this->t('Chart Wrapper'),
+      '#default_value' => isset($items[$delta]->chart_wrapper) ?
+      $items[$delta]->chart_wrapper : NULL,
       '#prefix' => '<div class="google-charts-preview-wrapper"></div><div class="google-chart-options-field-wrapper">',
       '#suffix' => '</div>',
     ];
