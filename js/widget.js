@@ -1,13 +1,8 @@
 // Widget js
 (function($, Drupal, Handsontable, google) {
 
-  // console.log($);
-  // console.log(Drupal);
-  // console.log(Handsontable);
-  // console.log(google);
-
   // Load the Visualization API and the corechart package.
-  google.charts.load('current', {'packages':['corechart']});
+  google.charts.load('current', {'packages':['charteditor']});
 
   // if string is empty
   function isEmpty(str) {
@@ -62,42 +57,44 @@
     return arr;
   }
 
-  // helper function to draw google chart
-  function drawChart(elem, hotdata) {
-
-    // Create the data table.
-    var data = new google.visualization.arrayToDataTable(hotdata, true );
-
-    // Set chart options
-    var options = {'title':'How Much Pizza I Ate Last Night'};
-
-    // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.BarChart(elem);
-    chart.draw(data, options);
-
-    return chart;
-  }
-
-  // helper function to redraw chart if data is edited
-  function dataRedraw(chart, hotdata) {
-
-    try {
-      // Create the data table.
-      var data = new google.visualization.arrayToDataTable(hotdata, true );
-
-      // Set chart options
-      var options = {'title':'How Much Pizza I Ate Last Night'};
-
-      chart.draw(data, options);
-    } catch (error) {
-      console.log(hotdata);
-      console.log(error);
-    }
-  }
-
   Drupal.behaviors.google_chart_field = {
     attach: function (context, settings) {
       $(".google-chart-field-wrapper", context).once("widget-builld").each(function (i, field) {
+
+        var chartEditor;
+        var chartWrapper;
+
+        $(field).find('.google-charts-preview-wrapper').before('<button class="google-charts-editor-button">Edit Chart</button>');
+
+        // helper function to draw google chart
+        function drawChart(elem, hotdata) {
+          // Create the chart to edit.
+          data = new google.visualization.arrayToDataTable(hotdata, true );
+          chartWrapper = new google.visualization.ChartWrapper({
+            'chartType':'LineChart',
+            'dataTable': data,
+          });
+
+          chartEditor = new google.visualization.ChartEditor();
+          google.visualization.events.addListener(chartEditor, 'ok', redrawChart);
+        }
+
+        // helper function to redraw chart
+        function redrawChart() {
+          if (chartEditor){
+            chartEditor.getChartWrapper().draw($(field).find('.google-charts-preview-wrapper').get(0));
+            chartWrapper = chartEditor.getChartWrapper();
+          }
+        }
+
+        // helper function to reset data
+        function resetData(data) {
+          if (chartEditor){
+            data = new google.visualization.arrayToDataTable(data, true );
+            chartWrapper.setDataTable(data);
+            chartWrapper.draw($(field).find('.google-charts-preview-wrapper').get(0));
+          }
+        }
 
         // set up data
         var data = $(field).find("[name$='[data]']").val();
@@ -126,9 +123,16 @@
         });
 
         // create google charts preview
-        var chart;
         google.charts.setOnLoadCallback(function () {
-          chart = drawChart($(field).find('.google-charts-preview-wrapper').get(0), cleanArray(data));
+          drawChart($(field).find('.google-charts-preview-wrapper').get(0), cleanArray(data));
+        });
+
+        $('.google-charts-editor-button').on('click', function (e) {
+          e.preventDefault();
+
+          if (chartEditor && chartWrapper) {
+            chartEditor.openDialog(chartWrapper, {});
+          }
         });
 
         // when the handsontable updates
@@ -137,25 +141,25 @@
             var data = hot.getData();
             data = JSON.stringify(cleanArray(data));
             $(field).find("[name$='[data]']").val(data);
-            dataRedraw(chart, JSON.parse(data));
+            resetData(JSON.parse(data));
           },
           afterChange: function () {
             var data = hot.getData();
             data = JSON.stringify(cleanArray(data));
             $(field).find("[name$='[data]']").val(data);
-            dataRedraw(chart, JSON.parse(data));
+            resetData(JSON.parse(data));
           },
           afterColumnMove: function () {
             var data = hot.getData();
             data = JSON.stringify(cleanArray(data));
             $(field).find("[name$='[data]']").val(data);
-            dataRedraw(chart, JSON.parse(data));
+            resetData(JSON.parse(data));
           },
           afterRowMove: function () {
             var data = hot.getData();
             data = JSON.stringify(cleanArray(data));
             $(field).find("[name$='[data]']").val(data);
-            dataRedraw(chart, JSON.parse(data));
+            resetData(JSON.parse(data));
           },
           afterGetColHeader: function (column, TH) {
             if (column > 0) {
@@ -165,9 +169,6 @@
             }
           }
         });
-
-        // create google charts form
-      
       });
     }
   };

@@ -74,7 +74,7 @@ class GoogleChartWidget extends WidgetBase {
       '#title' => $this->t('Options'),
       '#default_value' => isset($items[$delta]->options) ?
       $items[$delta]->options : NULL,
-      '#prefix' => '<div class="google-charts-options-wrapper"></div><div class="google-charts-preview-wrapper"></div><div class="google-chart-options-field-wrapper">',
+      '#prefix' => '<div class="google-charts-preview-wrapper"></div><div class="google-chart-options-field-wrapper">',
       '#suffix' => '</div>',
     ];
 
