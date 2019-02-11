@@ -22,3 +22,16 @@ function google_chart_field_help($route_name, RouteMatchInterface $route_match) 
     default:
   }
 }
+
+/**
+ * The field theme. Implements hook_theme().
+ */
+function google_chart_field_theme($existing, $type, $theme, $path) {
+  return [
+    'google_chart_field' => [
+      'variables' => [
+        'chart_wrapper' => NULL,
+      ],
+    ],
+  ];
+}

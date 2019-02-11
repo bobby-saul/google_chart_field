@@ -64,7 +64,7 @@
         var chartEditor;
         var chartWrapper;
 
-        $(field).find('.google-charts-preview-wrapper').before('<button class="google-charts-editor-button">Edit Chart</button>');
+        $(field).find('.google-charts-preview-wrapper').before('<button class="google-charts-editor-button button">Edit Chart</button>');
 
         // helper function to draw google chart
         function drawChart(hotdata) {
